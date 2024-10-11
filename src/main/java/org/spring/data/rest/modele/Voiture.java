@@ -1,15 +1,10 @@
 package org.spring.data.rest.modele;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import jakarta.persistence.*;
+import lombok.*;
 
-@Data @NoArgsConstructor @AllArgsConstructor @Entity
+@Data @NoArgsConstructor @RequiredArgsConstructor
+@Entity
 public class Voiture {
     @Id @GeneratedValue( strategy = GenerationType.IDENTITY ) private Long id;
     @NonNull private String marque;
@@ -18,4 +13,5 @@ public class Voiture {
     @NonNull private String immatricule;
     @NonNull private Integer annee;
     @NonNull private Integer prix;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "proprietaire") @NonNull private Proprietaire proprietaire;
 }
