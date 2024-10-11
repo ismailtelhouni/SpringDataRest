@@ -1,5 +1,6 @@
 package org.spring.data.rest.modele;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,5 +14,5 @@ public class Voiture {
     @NonNull private String immatricule;
     @NonNull private Integer annee;
     @NonNull private Integer prix;
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "proprietaire") @NonNull private Proprietaire proprietaire;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "proprietaire") @NonNull @JsonIgnore private Proprietaire proprietaire;
 }
