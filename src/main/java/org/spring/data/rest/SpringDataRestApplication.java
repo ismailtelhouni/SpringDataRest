@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class SpringDataRestApplication {
-    private VoitureRepo repository;
+    private final VoitureRepo repository;
     public SpringDataRestApplication(VoitureRepo repository) {this.repository = repository;}
     public static void main(String[] args) {
         SpringApplication.run(SpringDataRestApplication.class, args);
