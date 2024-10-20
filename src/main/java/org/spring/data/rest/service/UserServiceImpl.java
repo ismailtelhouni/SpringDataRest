@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User registerUser(String username, String password, String email) {
+    public User registerUser(String username, String email , String password) {
         if (userRepository.existsByUsername(username)) {
             throw new RuntimeException("Error: Username is already taken!");
         }

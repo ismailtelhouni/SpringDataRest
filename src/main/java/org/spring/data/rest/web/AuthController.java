@@ -4,13 +4,10 @@ import org.spring.data.rest.dto.SignupRequest;
 import org.spring.data.rest.modele.User;
 import org.spring.data.rest.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/")
 public class AuthController {
     private final UserService userService;
 
