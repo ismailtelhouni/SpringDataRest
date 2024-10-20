@@ -8,9 +8,25 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-
+    networks:
+      - spring-net
+  voiture-app-backend:
+    image: voiture-app-backend-spring:0.0.1-SNAPSHOT
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    networks:
+      - spring-net
 volumes:
   pgdata:
+networks:
+  spring-net:

@@ -17,7 +17,7 @@ public class SecurityConfig {
             registry.anyRequest().authenticated();
         })
         .oauth2Login(oauth2Login->{
-            oauth2Login.successHandler((request, response, authentication) -> response.sendRedirect("voitures"));
+            oauth2Login.successHandler((request, response, authentication) -> response.sendRedirect("/api"));
         })
         .formLogin(Customizer.withDefaults())
         .build();
