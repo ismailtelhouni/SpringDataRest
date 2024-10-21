@@ -2,7 +2,7 @@ version: '3'
 services:
   postgres:
     image: postgres
-    container_name: my-postgres-container
+    container_name: postgres-db
     environment:
       POSTGRES_DB: springboot
       POSTGRES_USER: postgres
@@ -15,6 +15,7 @@ services:
       - spring-net
   voiture-app-backend:
     image: voiture-app-backend-spring:0.0.1-SNAPSHOT
+    container_name: voiture-app-backend
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
@@ -24,6 +25,13 @@ services:
       - "8081:8081"
     depends_on:
       - postgres
+    networks:
+      - spring-net
+  voiture-front-end:
+    image: voiture-app-frontend
+    container_name: voiture-app-frontend
+    ports:
+      - "3000:80"
     networks:
       - spring-net
 volumes:
