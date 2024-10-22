@@ -26,13 +26,17 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
     @Override
     @Transactional
     public User registerUser(String username, String email , String password) {
-        if (userRepository.existsByUsername(username)) {
+        if (Boolean.TRUE.equals(userRepository.existsByUsername(username))) {
             throw new RuntimeException("Error: Username is already taken!");
         }
-        if (userRepository.existsByEmail(email)) {
+        if (Boolean.TRUE.equals(userRepository.existsByEmail(email))) {
             throw new RuntimeException("Error: Email is already in use!");
         }
 
