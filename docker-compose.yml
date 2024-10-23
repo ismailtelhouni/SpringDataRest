@@ -34,7 +34,30 @@ services:
       - "3000:80"
     networks:
       - spring-net
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - spring-net
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana  # Persistent storage for Grafana data
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin  # Set Grafana admin password
+    depends_on:
+      - prometheus
+    networks:
+      - spring-net
 volumes:
   pgdata:
+  grafana-storage:
 networks:
   spring-net:

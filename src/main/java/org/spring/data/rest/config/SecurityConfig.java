@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(registry -> {
             registry.requestMatchers("/").permitAll();
-            registry.requestMatchers("/register","/voitures","/api","/api/voitures/**","/api/proprietaires/**").permitAll();
+            registry.requestMatchers("/register","/voitures","/api","/api/voitures/**","/api/proprietaires/**","/actuator/**").permitAll();
             registry.anyRequest().authenticated();
         })
         .oauth2Login(oauth2Login-> oauth2Login.successHandler(customOAuth2SuccessHandler))
