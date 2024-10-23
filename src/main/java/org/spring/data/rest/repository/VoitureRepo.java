@@ -1,5 +1,6 @@
 package org.spring.data.rest.repository;
 
+import org.spring.data.rest.dto.VoituresProjection;
 import org.spring.data.rest.modele.Voiture;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@RepositoryRestResource
+@RepositoryRestResource(excerptProjection = VoituresProjection.class)
 @Repository
 public interface VoitureRepo extends JpaRepository<Voiture, Long> {
     List<Voiture> findByMarque(String marque);

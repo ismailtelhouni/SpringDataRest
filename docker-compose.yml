@@ -2,7 +2,7 @@ version: '3'
 services:
   postgres:
     image: postgres
-    container_name: my-postgres-container
+    container_name: postgres-db
     environment:
       POSTGRES_DB: springboot
       POSTGRES_USER: postgres
@@ -15,6 +15,7 @@ services:
       - spring-net
   voiture-app-backend:
     image: voiture-app-backend-spring:0.0.1-SNAPSHOT
+    container_name: voiture-app-backend
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
@@ -26,7 +27,37 @@ services:
       - postgres
     networks:
       - spring-net
+  voiture-front-end:
+    image: voiture-app-frontend
+    container_name: voiture-app-frontend
+    ports:
+      - "3000:80"
+    networks:
+      - spring-net
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - spring-net
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana  # Persistent storage for Grafana data
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin  # Set Grafana admin password
+    depends_on:
+      - prometheus
+    networks:
+      - spring-net
 volumes:
   pgdata:
+  grafana-storage:
 networks:
   spring-net:
