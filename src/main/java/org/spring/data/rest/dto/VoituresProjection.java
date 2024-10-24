@@ -1,6 +1,5 @@
 package org.spring.data.rest.dto;
 
-import lombok.NonNull;
 import org.spring.data.rest.modele.Proprietaire;
 import org.spring.data.rest.modele.Voiture;
 import org.springframework.data.rest.core.config.Projection;

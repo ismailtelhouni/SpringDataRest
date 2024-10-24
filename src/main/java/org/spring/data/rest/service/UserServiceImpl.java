@@ -1,5 +1,6 @@
 package org.spring.data.rest.service;
 
+import org.spring.data.rest.exception.EntityAlreadyExistsException;
 import org.spring.data.rest.modele.ERole;
 import org.spring.data.rest.modele.Role;
 import org.spring.data.rest.modele.User;
@@ -26,32 +27,25 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
-
     @Override
     @Transactional
     public User registerUser(String username, String email , String password) {
         if (Boolean.TRUE.equals(userRepository.existsByUsername(username))) {
-            throw new RuntimeException("Error: Username is already taken!");
+            throw new EntityAlreadyExistsException("Error: Username is already taken!");
         }
         if (Boolean.TRUE.equals(userRepository.existsByEmail(email))) {
-            throw new RuntimeException("Error: Email is already in use!");
+            throw new EntityAlreadyExistsException("Error: Email is already in use!");
         }
-
         // Create new user's account
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
-
         // Set default role
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         roles.add(userRole);
-
         user.setRoles(roles);
         return userRepository.save(user);
     }

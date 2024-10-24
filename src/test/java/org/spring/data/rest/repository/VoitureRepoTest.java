@@ -31,7 +31,7 @@ class VoitureRepoTest {
         voitureRepo.save(new Voiture("Renault"  , "Uber", "Blanche" , "1234AB", 2022, 15000     , proprietaire2));
     }
     @Test
-    public void shouldAjouterVoiture() {
+    void shouldAjouterVoiture() {
         Voiture voiture = new Voiture("MiolaCar", "Uber", "Blanche", "M-2020", 2021, 180000 , proprietaire1);
         voitureRepo.save(voiture);
         assertThat(voiture.getId()).isNotNull();
@@ -43,55 +43,55 @@ class VoitureRepoTest {
         assertEquals(180000, voiture.getPrix());
     }
     @Test
-    public void testNotFindByMarque() {
+    void testNotFindByMarque() {
         List<Voiture> voitures = voitureRepo.findByMarque("MiolaCar2");
         assertTrue(voitures.isEmpty());
     }
     @Test
-    public void testFindByMarque() {
+    void testFindByMarque() {
         List<Voiture> voitures = voitureRepo.findByMarque("Renault");
         assertFalse(voitures.isEmpty());
         assertEquals("Renault", voitures.get(0).getMarque());
         assertThat(voitures).hasSize(2);
     }
     @Test
-    public void testFindByModele() {
+    void testFindByModele() {
         List<Voiture> voitures = voitureRepo.findByModele("Clio");
         assertFalse(voitures.isEmpty());
         assertEquals("Clio", voitures.get(0).getModele());
         assertThat(voitures).hasSize(2);
     }
     @Test
-    public void testNotFindByModele() {
+    void testNotFindByModele() {
         List<Voiture> voitures = voitureRepo.findByModele("Uber2");
         assertTrue(voitures.isEmpty());
     }
     @Test
-    public void testFindByCouleur() {
+    void testFindByCouleur() {
         List<Voiture> voitures = voitureRepo.findByCouleur("Rouge");
         assertFalse(voitures.isEmpty());
         assertEquals("Rouge", voitures.get(0).getCouleur());
         assertThat(voitures).hasSize(1);
     }
     @Test
-    public void testNotFindByCouleur() {
+    void testNotFindByCouleur() {
         List<Voiture> voitures = voitureRepo.findByCouleur("Red");
         assertTrue(voitures.isEmpty());
     }
     @Test
-    public void testFindByAnnee() {
+    void testFindByAnnee() {
         List<Voiture> voitures = voitureRepo.findByAnnee(2022);
         assertFalse(voitures.isEmpty());
         assertEquals(2022, voitures.get(0).getAnnee());
         assertThat(voitures).hasSize(2);
     }
     @Test
-    public void testNotFindByAnnee() {
+    void testNotFindByAnnee() {
         List<Voiture> voitures = voitureRepo.findByAnnee(2019);
         assertTrue(voitures.isEmpty());
     }
     @Test
-    public void testFindByMarqueAndModele() {
+    void testFindByMarqueAndModele() {
         List<Voiture> voitures = voitureRepo.findByMarqueAndModele("Renault", "Clio");
         assertFalse(voitures.isEmpty());
         assertEquals("Renault", voitures.get(0).getMarque());
@@ -99,12 +99,12 @@ class VoitureRepoTest {
         assertThat(voitures).hasSize(1);
     }
     @Test
-    public void testNotFindByMarqueAndModele() {
+    void testNotFindByMarqueAndModele() {
         List<Voiture> voitures = voitureRepo.findByMarqueAndModele("MiolaCar", "Uber");
         assertTrue(voitures.isEmpty());
     }
     @Test
-    public void testFindByMarqueOrCouleur() {
+    void testFindByMarqueOrCouleur() {
         List<Voiture> voitures = voitureRepo.findByMarqueOrCouleur("Renault", "Rouge");
         assertFalse(voitures.isEmpty());
         assertEquals("Renault", voitures.get(0).getMarque());
@@ -112,12 +112,12 @@ class VoitureRepoTest {
         assertThat(voitures).hasSize(2);
     }
     @Test
-    public void testNotFindByMarqueOrCouleur() {
+    void testNotFindByMarqueOrCouleur() {
         List<Voiture> voitures = voitureRepo.findByMarqueOrCouleur("Honda", "red");
         assertTrue(voitures.isEmpty());
     }
     @Test
-    public void testFindByMarqueOrderByAnneeAsc() {
+    void testFindByMarqueOrderByAnneeAsc() {
         List<Voiture> voitures = voitureRepo.findByMarqueOrderByAnneeAsc("Renault");
         assertFalse(voitures.isEmpty());
         assertEquals("Renault", voitures.get(0).getMarque());
@@ -125,31 +125,31 @@ class VoitureRepoTest {
         assertThat(voitures).hasSize(2);
     }
     @Test
-    public void testNotFindByMarqueOrderByAnneeAsc() {
+    void testNotFindByMarqueOrderByAnneeAsc() {
         List<Voiture> voitures = voitureRepo.findByMarqueOrderByAnneeAsc("Renault2");
         assertTrue(voitures.isEmpty());
     }
     @Test
-    public void testFindByMarque2() {
+    void testFindByMarque2() {
         List<Voiture> voitures = voitureRepo.findByMarque2("Renault");
         assertFalse(voitures.isEmpty());
         assertEquals("Renault", voitures.get(0).getMarque());
         assertThat(voitures).hasSize(2);
     }
     @Test
-    public void testNotFindByMarque2() {
+    void testNotFindByMarque2() {
         List<Voiture> voitures = voitureRepo.findByMarque2("Renault2");
         assertTrue(voitures.isEmpty());
     }
     @Test
-    public void testFindByMarqueEndsWith() {
+     void testFindByMarqueEndsWith() {
         List<Voiture> voitures = voitureRepo.findByMarqueEndsWith("ult");
         assertFalse(voitures.isEmpty());
         assertEquals("Renault", voitures.get(0).getMarque());
         assertThat(voitures).hasSize(2);
     }
     @Test
-    public void testNotFindByMarqueEndsWith() {
+     void testNotFindByMarqueEndsWith() {
         List<Voiture> voitures = voitureRepo.findByMarque2("2");
         assertTrue(voitures.isEmpty());
     }
