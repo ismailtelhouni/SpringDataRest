@@ -80,7 +80,7 @@ pipeline {
                 }
             }
         }
-         stage('Check Files') {
+        stage('Check Files Frontend') {
             steps {
                 dir('frontend'){
                     script {
