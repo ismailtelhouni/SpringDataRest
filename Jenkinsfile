@@ -14,6 +14,61 @@ pipeline {
                 }
             }
         }
+        stage('Check Files') {
+            steps {
+                dir('backend'){
+                    script {
+                        sh 'ls -la SpringDataRest'
+                    }
+                }
+            }
+        }
+        stage ( 'Gitleaks Scan') {
+            steps {
+                dir('backend'){
+                    script {
+                        echo " Starting Gitleaks scan "
+                        // Run the Gitleaks scan and allow the pipeline to continue even if errors occur
+                        def result = sh(
+                            script: """
+                            docker pull zricethezav/gitleaks:latest
+                            docker run --rm -v ${WORKSPACE}:/path \
+                            zricethezav/gitleaks:latest \
+                            detect \
+                            --source /path \
+                            --report-path /path/gitleaks-report.json \
+                            --report-format json
+                            """,
+                            returnStatus: true // Captures the exit status instead of failing
+                        )
+
+                        if (result != 0) {
+                            echo "Gitleaks found issues or encountered an error, but continuing with the pipeline."
+                        } else {
+                            echo "Gitleaks scan completed successfully with no issues."
+                        }
+
+                        // Display the contents of the report in the console
+                        sh "cat ${WORKSPACE}/gitleaks-report.json || echo 'No report file generated'"
+
+                    }
+                }
+            }
+        }
+
+        stage('OWASP Dependency-Check Vulnerabilities') {
+            steps {
+                dependencyCheck additionalArguments: '''
+                    -o './'
+                    -s './'
+                    -f 'ALL'
+                    --prettyPrint
+                ''', odcInstallation: 'OWASP Dependency-Check Vulnerabilities'
+
+                dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+            }
+        }
+
         stage('Build Frontend Application') {
             steps {
                 dir('frontend') {
