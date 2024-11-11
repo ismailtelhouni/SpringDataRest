@@ -78,7 +78,6 @@ pipeline {
                         """
                     }
                 }
-
             }
         }
         stage('Build Frontend Application') {
@@ -110,6 +109,7 @@ pipeline {
         stage('Run Docker Compose') {
             steps {
                 // Lancer Docker Compose
+                sh 'docker-compose down'
                 sh 'docker-compose up -d'
             }
         }
