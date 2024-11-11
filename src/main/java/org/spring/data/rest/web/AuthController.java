@@ -3,6 +3,8 @@ package org.spring.data.rest.web;
 import org.spring.data.rest.config.jwt.JwtUtils;
 import org.spring.data.rest.dto.AuthTokenRequest;
 import org.spring.data.rest.dto.SignupRequest;
+import org.spring.data.rest.exception.InvalidUsernamePasswordException;
+import org.spring.data.rest.modele.User;
 import org.spring.data.rest.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,16 +43,24 @@ public class AuthController {
         this.jwtUtils = jwtUtils;
     }
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<Map<String , String>> registerUser(@RequestBody SignupRequest signUpRequest) {
         try {
-            userService.registerUser(
+            User user = userService.registerUser(
                     signUpRequest.getUsername(),
                     signUpRequest.getEmail(),
                     signUpRequest.getPassword()
             );
-            return ResponseEntity.ok("User registered successfully!");
+            Authentication authentication = authenticate(user.getUsername(), signUpRequest.getPassword());
+            String subject = authentication.getName();
+            String scope = authentication
+                    .getAuthorities()
+                    .stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.joining(" " ));
+            Map<String , String> idToken = jwtUtils.generateJwtToken(subject , true , scope);
+            return new ResponseEntity<>(idToken,HttpStatus.OK);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("errorMessage", e.getMessage()));
         }
     }
     @PostMapping("/token")
@@ -59,14 +69,7 @@ public class AuthController {
         String scope=null;
         String errorMessage = "errorMessage";
         if(authTokenRequest.getGrantType().equals("password")){
-            Authentication authentication;
-            try {
-                authentication = authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(authTokenRequest.getUsername(), authTokenRequest.getPassword())
-                );
-            }catch (Exception e){
-                return new ResponseEntity<>(Map.of(errorMessage,"Invalid username or password"),HttpStatus.UNAUTHORIZED);
-            }
+            Authentication authentication = authenticate(authTokenRequest.getUsername(), authTokenRequest.getPassword());
             subject = authentication.getName();
             scope = authentication
                 .getAuthorities()
@@ -93,5 +96,16 @@ public class AuthController {
         }
         Map<String , String> idToken = jwtUtils.generateJwtToken(subject , authTokenRequest.isWithRefreshToken(), scope);
         return new ResponseEntity<>(idToken,HttpStatus.OK);
+    }
+    private Authentication authenticate(String username, String password) {
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password)
+            );
+        }catch (Exception e){
+            throw new InvalidUsernamePasswordException("Invalid username or password");
+        }
+        return authentication;
     }
 }
