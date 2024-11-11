@@ -68,7 +68,19 @@ pipeline {
                 dependencyCheckPublisher pattern: 'dependency-check-report.xml'
             }
         }
+        stage('Setup .env File') {
+            steps {
+                dir('frontend'){
+                    script {
+                        writeFile file: '.env', text: """
+                        REACT_APP_API_URL=http://localhost:8081
+                        REACT_APP_API_KEY=your_api_key_here
+                        """
+                    }
+                }
 
+            }
+        }
         stage('Build Frontend Application') {
             steps {
                 dir('frontend') {
