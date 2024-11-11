@@ -18,7 +18,7 @@ pipeline {
             steps {
                 dir('backend'){
                     script {
-                        sh 'ls -la SpringDataRest'
+                        sh 'ls -la'
                     }
                 }
             }
