@@ -80,6 +80,15 @@ pipeline {
                 }
             }
         }
+         stage('Check Files') {
+            steps {
+                dir('frontend'){
+                    script {
+                        sh 'ls -la'
+                    }
+                }
+            }
+        }
         stage('Build Frontend Application') {
             steps {
                 dir('frontend') {
