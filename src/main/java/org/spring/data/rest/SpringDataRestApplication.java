@@ -2,7 +2,9 @@ package org.spring.data.rest;
 
 import org.spring.data.rest.config.RsaKeysConfig;
 import org.spring.data.rest.modele.ERole;
+import org.spring.data.rest.modele.Proprietaire;
 import org.spring.data.rest.modele.Role;
+import org.spring.data.rest.repository.ProprietaireRepo;
 import org.spring.data.rest.repository.RoleRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,8 +19,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableConfigurationProperties(RsaKeysConfig.class)
 public class SpringDataRestApplication {
     private final RoleRepository roleRepository;
-    public SpringDataRestApplication( RoleRepository roleRepository ) {
+    private final ProprietaireRepo proprietaireRepo;
+    public SpringDataRestApplication( RoleRepository roleRepository , ProprietaireRepo proprietaireRepo ) {
         this.roleRepository  = roleRepository;
+        this.proprietaireRepo = proprietaireRepo;
     }
     public static void main(String[] args) {
         SpringApplication.run(SpringDataRestApplication.class, args);
@@ -32,6 +36,12 @@ public class SpringDataRestApplication {
             if(roleRepository.findByName(ERole.ROLE_USER).isEmpty() && roleRepository.findByName(ERole.ROLE_ADMIN).isEmpty()) {
                 roleRepository.save(role);
                 roleRepository.save(role2);
+            }
+            Proprietaire proprietaire1 = new Proprietaire("Ali" , "Hassan");
+            Proprietaire proprietaire2 = new Proprietaire("Najat" , "Bani");
+            if(proprietaireRepo.findAll().isEmpty()){
+                proprietaireRepo.save(proprietaire1);
+                proprietaireRepo.save(proprietaire2);
             }
         };
     }

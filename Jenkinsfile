@@ -101,30 +101,41 @@ pipeline {
                 sh 'docker-compose up -d'
             }
         }
-        /* stage('SonarQube Analysis') {
+        stage('SonarQube Analysis Backend'){
+            steps{
+                dir('backend'){
+                    sh 'mvn clean verify sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqa_4fbd384f6cd2d21b48e957ebb1825dfbc9ab547a'
+                }
+            }
+        }
+        stage('SonarQube Analysis Frontend') {
             steps {
-                script {
-                    def scannerHome = tool 'SonarScanner';
-                    withSonarQubeEnv('SonarQube') {
-                        sh """
-                            ${scannerHome}/bin/sonar-scanner \
-                            -Dsonar.projectKey=Angular_2 \
-                            -Dsonar.host.url=http://localhost:9000 \
-                            -Dsonar.login=sqp_7992fc47e7e98fc3277071f9941f43af0b9d0557 \
-                            -Dsonar.sources=src \
-                            -Dsonar.exclusions="**//* node_modules *//**"
-                        """
+                dir('frontend') {
+                    script {
+                        def scannerHome = tool 'SonarScanner';
+                        withSonarQubeEnv('SonarQube') {
+                            sh """
+                                ${scannerHome}/bin/sonar-scanner \
+                                -Dsonar.projectKey=Voiture-App-Front \
+                                -Dsonar.host.url=http://localhost:9000 \
+                                -Dsonar.login=sqp_d92d0b0a6639e268a9bb92ac9d89d5faf70d7bab \
+                                -Dsonar.sources=src \
+                                -Dsonar.exclusions="**/node_modules/**"
+                            """
+                        }
                     }
                 }
             }
         }
         stage('Quality Gate') {
-            steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
+            dir('frontend') {
+                steps {
+                    timeout(time: 5, unit: 'MINUTES') {
+                        waitForQualityGate abortPipeline: true
+                    }
                 }
             }
-        } */
+        }
     }
     post {
         always {
