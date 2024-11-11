@@ -14,15 +14,6 @@ pipeline {
                 }
             }
         }
-        stage('Check Files') {
-            steps {
-                dir('backend'){
-                    script {
-                        sh 'ls -la'
-                    }
-                }
-            }
-        }
         stage ( 'Gitleaks Scan') {
             steps {
                 dir('backend'){
@@ -68,23 +59,37 @@ pipeline {
                 dependencyCheckPublisher pattern: 'dependency-check-report.xml'
             }
         }
-        stage('Setup .env File') {
+        stage('SonarQube Analysis Backend'){
+            steps{
+                dir('backend'){
+                    sh 'mvn clean verify sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqa_4fbd384f6cd2d21b48e957ebb1825dfbc9ab547a'
+                }
+            }
+        }
+        stage('SonarQube Analysis Frontend') {
             steps {
-                dir('frontend'){
+                dir('frontend') {
                     script {
-                        writeFile file: '.env', text: """
-                        REACT_APP_API_URL=http://localhost:8081
-                        REACT_APP_API_KEY=your_api_key_here
-                        """
+                        def scannerHome = tool 'SonarScanner';
+                        withSonarQubeEnv('SonarQube') {
+                            sh """
+                                ${scannerHome}/bin/sonar-scanner \
+                                -Dsonar.projectKey=Voiture-App-Front \
+                                -Dsonar.host.url=http://localhost:9000 \
+                                -Dsonar.login=sqp_d92d0b0a6639e268a9bb92ac9d89d5faf70d7bab \
+                                -Dsonar.sources=src \
+                                -Dsonar.exclusions="**/node_modules/**"
+                            """
+                        }
                     }
                 }
             }
         }
-        stage('Check Files Frontend') {
+        stage('Quality Gate') {
             steps {
-                dir('frontend'){
-                    script {
-                        sh 'ls -la'
+                dir('frontend') {
+                    timeout(time: 5, unit: 'MINUTES') {
+                        waitForQualityGate abortPipeline: true
                     }
                 }
             }
@@ -120,41 +125,6 @@ pipeline {
                 // Lancer Docker Compose
                 sh 'docker-compose down'
                 sh 'docker-compose up -d'
-            }
-        }
-        stage('SonarQube Analysis Backend'){
-            steps{
-                dir('backend'){
-                    sh 'mvn clean verify sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqa_4fbd384f6cd2d21b48e957ebb1825dfbc9ab547a'
-                }
-            }
-        }
-        stage('SonarQube Analysis Frontend') {
-            steps {
-                dir('frontend') {
-                    script {
-                        def scannerHome = tool 'SonarScanner';
-                        withSonarQubeEnv('SonarQube') {
-                            sh """
-                                ${scannerHome}/bin/sonar-scanner \
-                                -Dsonar.projectKey=Voiture-App-Front \
-                                -Dsonar.host.url=http://localhost:9000 \
-                                -Dsonar.login=sqp_d92d0b0a6639e268a9bb92ac9d89d5faf70d7bab \
-                                -Dsonar.sources=src \
-                                -Dsonar.exclusions="**/node_modules/**"
-                            """
-                        }
-                    }
-                }
-            }
-        }
-        stage('Quality Gate') {
-            steps {
-                dir('frontend') {
-                    timeout(time: 5, unit: 'MINUTES') {
-                        waitForQualityGate abortPipeline: true
-                    }
-                }
             }
         }
     }
